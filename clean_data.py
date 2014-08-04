@@ -1,6 +1,6 @@
+from __future__ import division
 import pandas as pd
 import numpy as np
-from __future__ import division
 import phonemes
 import pickle as pk
 from sklearn import cross_validation
@@ -12,6 +12,7 @@ def read_in_data(filename):
     ((data['Arrived As'] == 'STRAY')|(data['Arrived As'] == 'UNABLE TO CARE FOR')|(data['Arrived As'] == 'UNWANTED'))]  
     desired_columns = ['Arrival Date', 'Arrived As', 'Breed', 'Gender', 'Pet Name', 'Status', 'Condition', 'Arrival Precinct','Length of Stay','Fixed', 'Age','Size','Primary Color','Secondary Color']
     
+    dogs.index = range(len(dogs))
     return dogs[desired_columns]
     
 def adopt_euth_ratio(x):
@@ -42,9 +43,11 @@ def breed(x):
     else:
         return x
         
-def get_null_index(dataframe, column):
-    return np.where(dataframe[column].isnull() == True)[0]
-    
+def remove_nans(dataframe, column):
+    for i in column:
+        dataframe = dataframe[~dataframe[i].isnull()]
+    return dataframe
+
 
 
 def main():
@@ -97,9 +100,11 @@ def main():
     ############
     # REMOVING SOME MISSING DATA
     ##################
+    bark = remove_nans(dogs_final,['Size','Age','Gender'])
     
-    
-    # saving the data in new csv files
+    ############
+    # PARSING out TRAINING/TESTING DATA, then saving in separate files
+    ##################
     
     indices = cross_validation.ShuffleSplit(len(dogs_final),n_iter = 1,test_size = 0.25)
 
