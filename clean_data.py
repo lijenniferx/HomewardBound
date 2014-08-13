@@ -1,19 +1,39 @@
 from __future__ import division
+
 import pandas as pd
 import numpy as np
 import phonemes
-import pickle as pk
-from sklearn import cross_validation
 
-def read_in_data(filename):
-    ''' reads in the data and selects out the desired columns'''
-    data = pd.read_csv(filename)
-    dogs=data[(data['Animal Type'] =='DOG') & ((data['Status'] == 'ADOPTED')|(data['Status'] == 'EUTHANIZED')) & \
-    ((data['Arrived As'] == 'STRAY')|(data['Arrived As'] == 'UNABLE TO CARE FOR')|(data['Arrived As'] == 'UNWANTED'))]  
-    desired_columns = ['Arrival Date', 'Arrived As', 'Breed', 'Gender', 'Pet Name', 'Status', 'Condition', 'Arrival Precinct','Length of Stay','Fixed', 'Age','Size','Primary Color','Secondary Color']
+import pickle as pk
+
+import pymysql as mdb
+from pandas.io import sql
+
+from sklearn import cross_validation
+import scipy.signal
+
+import os.path
+
+from number_of_animals_at_shelter import get_pop
+
+###########
+
+
+def list_of_current_animals():
+    with open('list_of_current_animals.pk','r') as f:
+        return pk.load(f)       
+
+def read_in_data():
+    ''' reads in the cleaned table from MySQL'''
+    con =  mdb.connect('localhost', 'root','shreddie131','HomewardBound'); 
     
-    dogs.index = range(len(dogs))
-    return dogs[desired_columns]
+    with con:
+        dogs = sql.read_sql('select * from Pets_cleaned;', con = con)   
+        weather = sql.read_sql('select * from PetWeather;',con = con)
+        econ = sql.read_sql('select * from PetEcon;',con = con)
+
+
+    return dogs, weather, econ
     
 def adopt_euth_ratio(x):
     return sum(x['Status'] == 'ADOPTED')/sum(x['Status'] == 'EUTHANIZED')
@@ -42,43 +62,134 @@ def breed(x):
         return breed_dictionary[x]
     else:
         return x
+
+
+adopt_dict = {'ADOPTED': 1,
+        'EUTHANIZED':0}
+    
+gender_dict = {'MALE':'MALE',
+                'FEMALE':'FEMALE',
+                'NEUTER':'MALE',
+                'SPAYED':'FEMALE'}
+                
+condition_dict = {'GOOD':'GOOD',
+                'FAIR':'FAIR',
+                'POOR':'BAD',
+                'NEEDS MEDICAL':'BAD',
+                'TOO YOUNG':'BAD',
+                'WILD':'BAD'}
+                
+month_dict = {1:'JAN',
+                 2:'FEB',
+                 3:'MAR',
+                 4:'APR',
+                 5:'MAY',
+                 6:'JUN',
+                 7:'JUL',
+                 8:'AUG',
+                 9:'SEP',
+                10:'OCT',
+                11:'NOV',
+                12:'DEC'}
+                
+weekday_dict = {0:'SUN',
+                1:'MON',
+                2:'TUES',
+                3:'WED',
+                4:'THU',
+                5:'FRI',
+                6:'SAT'}
+                
+
+def map_dict(i,mydict):
+        if i in mydict.keys():
+            return mydict[i]
+        else:
+            return i
+            
+            
+
+class top_fraction(object):
+    '''generates two new columns that only contains the most popular breeds and colors'''
+    def __init__(self, fraction, input_column = ['Breed', 'PrimaryColor'], return_column = ['TopBreed','TopColor']):
+        self.input_column = input_column
+        self.fraction = fraction
+        self.return_column = return_column
         
-def remove_nans(dataframe, column):
-    for i in column:
-        dataframe = dataframe[~dataframe[i].isnull()]
-    return dataframe
+    def transform(self,dataframe):
+        for index in xrange(len(self.input_column)):
+            list_of_labels = np.cumsum(dataframe.groupby(self.input_column[index]).apply(lambda(x): len(x)/len(dataframe)).order(ascending = False))
+            desired_labels = list_of_labels[list_of_labels < self.fraction].index
+            # make new column
+            dataframe[self.return_column[index]] = dataframe[self.input_column[index]].apply(lambda(x): x if x in desired_labels else np.nan)  
+        return dataframe
 
 
-
-def main():
-    dogs_final = read_in_data('Pets.csv')
+def get_sanitized():
+    dogs_final, weather, econ = read_in_data()
 
     ############
     ## DATE INFO
     ############
     
     ## converting date info to pandas-friendly format
-    dogs_final['Arrival Date'] = pd.to_datetime(dogs_final['Arrival Date'])
-    dogs_final['Month'] = map(lambda(x):x.month, dogs_final['Arrival Date'].tolist())
-    dogs_final['Weekday'] = map(lambda(x):x.dayofweek, dogs_final['Arrival Date'].tolist())
-    dogs_final['Year'] = map(lambda(x):x.year, dogs_final['Arrival Date'].tolist())
+    dogs_final['ArrivalDate'] = pd.to_datetime(dogs_final['ArrivalDate'])
+    dogs_final['Year'] = map(lambda(x):x.year, dogs_final['ArrivalDate'].tolist())
+    dogs_final['Month'] = map(lambda(x):x.month, dogs_final['ArrivalDate'].tolist())
+    dogs_final['Weekday'] = map(lambda(x):x.dayofweek, dogs_final['ArrivalDate'].tolist())
+    dogs_final['Quarter'] = map(lambda(x):x.quarter, dogs_final['ArrivalDate'].tolist())
+    dogs_final['Week'] = map(lambda(x):x.week, dogs_final['ArrivalDate'].tolist())
+    dogs_final['Day'] = map(lambda(x):x.day, dogs_final['ArrivalDate'].tolist())
+
+    
+    ##############
+    # LENGTH of STaY (number of days)-- convert to int
+    ##############
+    dogs_final['LengthofStay'] = [int(x) if x is not None else 999 for x in dogs_final['LengthofStay']]
+    
+    ###################
+    ## OVERCROWDING
+    ###################
+    
+    ### figuring out how many dogs arrived within a 10 day period..indicate of how crowded things are
+    new_frame = pd.DataFrame(index = pd.date_range(min(dogs_final.ArrivalDate),max(dogs_final.ArrivalDate),freq='D'))
+    date_agg = pd.DataFrame(dogs_final.groupby('ArrivalDate').apply(lambda(x):len(x)))
+    
+    new_frame['Raw'] = [date_agg.ix[i][0] if i in date_agg.index else 0 for i in new_frame.index]
+    new_frame['Window'] = scipy.signal.convolve([new_frame['Raw'].tolist()[0] for x in range(10)]+ new_frame['Raw'].tolist(),[1 for i in range(10)])[10:-9]
+
+    def arrived(x):
+        return new_frame['Window'].ix[x]
+        
+    dogs_final['PupInflux'] = dogs_final['ArrivalDate'].apply(arrived)
+    dogs_final['ShelterPop'] = get_pop(dogs_final)
+    ####################################
+    #  MERGING WITH ECON DATA and weather data
+    ########################################
+
+    dogs_final = dogs_final.merge(econ)
+    
+
+    dogs_final =dogs_final.merge(weather, on = ['Month','Year','Day'])
+        
+
 
     ############
     ## NAME INFO
     ############
     
     ## cleaning up name info
-    dogs_final['Pet Name'] = map(pet_name_cleanup , dogs_final['Pet Name'].tolist())
+    dogs_final['PetName'] = map(pet_name_cleanup , dogs_final['PetName'].tolist())
     
     ## does the animal have a name? 
-    dogs_final['Has Name'] = map(has_name , dogs_final['Pet Name'].tolist())
+    dogs_final['HasName'] = map(has_name , dogs_final['PetName'].tolist())
     
         ## getting phonetic info
-    dogs_final['Phonetic'] = map(phonetic , dogs_final['Pet Name'].tolist())
+    dogs_final['Phonetic'] = map(phonetic , dogs_final['PetName'].tolist())
 
         ## getting alphabet info, and length of name
-    dogs_final['Alphabet'] = [np.nan if pd.isnull(x) else x[0] for x in dogs_final['Pet Name']]
-    dogs_final['Name Length'] = [0 if pd.isnull(x) else len(x) for x in dogs_final['Pet Name']]
+    dogs_final['Alphabet'] = [np.nan if pd.isnull(x) else x[0] for x in dogs_final['PetName']]
+    dogs_final['NameLength'] = [0 if pd.isnull(x) else len(x) for x in dogs_final['PetName']]
     
     ############
     ## BREED INFO
@@ -86,42 +197,89 @@ def main():
 
     dogs_final['Breed'] = dogs_final['Breed'].apply(breed)
     
+    #############################
+    ## which rows have NaNs or Unknowns for Gender, Pet Condition, Age, and Size?
+    #######################
+    remove_indices = np.unique(list(np.where(dogs_final['Gender'].isnull())[0])+\
+    list(np.where(dogs_final['PetCondition'].isnull())[0])+\
+    list(np.where(dogs_final['Age'].isnull())[0])+\
+    list(np.where(dogs_final['Size'].isnull())[0])+\
+    list(np.where(dogs_final['Gender'].isin(['ALTERED','UNKNOWN']))[0]))
+
+    ##################################
+    # FILLING IN NaN with most common
+    ################################
     
-    ###########
-    # REMOVING DEAD ANIMALS
-    #############
-    dogs_final = dogs_final[~dogs_final['Condition'].isin(['DEAD ON ARRIVAL'])]
+    #dogs_final[np.where(dogs_final['Gender'].isnull())] = dogs_final.groupby('Gender').size().index[0]
+    #dogs_final[np.where(dogs_final['Age'].isnull())] = dogs_final.groupby('Age').size().index[0]
+    #dogs_final[np.where(dogs_final['PetCondition'].isnull())] = dogs_final.groupby('PetCondition').size().index[0]
+
+    ####################
+    # MAKING DUMMY VARIABLES
+    ######################
+    instance = top_fraction(0.8)
+    dogs_final = instance.transform(dogs_final)
     
-    ###########
-    # REMOVING the 2 dogs from 2000
-    #############
-    dogs_final = dogs_final[~dogs_final['Year'].isin([2000])]
+    dogs_final['Status'] = dogs_final['Status'].apply(lambda(x):map_dict(x, adopt_dict))
+    dogs_final['Gender'] = dogs_final['Gender'].apply(lambda(x):map_dict(x, gender_dict))
+    dogs_final['PetCondition'] = dogs_final['PetCondition'].apply(lambda(x):map_dict(x, condition_dict))
+    dogs_final['Month'] = dogs_final['Month'].apply(lambda(x):map_dict(x, month_dict))
+    dogs_final['Weekday'] = dogs_final['Weekday'].apply(lambda(x):map_dict(x, weekday_dict))
+    
+    dummies = pd.get_dummies(dogs_final['Gender']).iloc[:,[1,2]]
+    dummies2 = pd.get_dummies(dogs_final['TopBreed'])
+    dummies3 = pd.get_dummies(dogs_final['TopColor'])
+    dummies4 = pd.get_dummies(dogs_final['ArrivedAs']).iloc[:,:-1]
+    dummies5 = pd.get_dummies(dogs_final['Age']).iloc[:,:-1]
+    dummies6 = pd.get_dummies(dogs_final['Size']).iloc[:,:-1]
+    dummies7 = pd.get_dummies(dogs_final['PetCondition']).iloc[:,:-1]
+    
+    largedata = pd.concat([dogs_final[['ArrivalDate','AnimalID','Status','Fixed','HasName','PupInflux','ShelterPop','HEAT','RAIN','Unemployment','Population','LengthofStay']],dummies,dummies2,dummies3,dummies4,dummies5,dummies6, dummies7],axis = 1)
+
+    #### getting examples from website
+    
+    example_data = largedata[largedata['AnimalID'].isin(list_of_current_animals())]
+    example_data = example_data.groupby('AnimalID').apply(lambda(x):x.sort('ArrivalDate').iloc[-1])    # grab most recent
+    example_data.to_csv('Dogs_Final_DEMO.csv',index = False)
+
+    ################################
+    ## generating data for the model
+    ################################
+    modeldata = largedata[~largedata.index.isin(remove_indices)]
+
+    modeldata = modeldata[modeldata['ArrivalDate'] < min(example_data.ArrivalDate) -  pd.DateOffset(days = 60)]  ### 
+
+    modeldata = modeldata[modeldata.Status.isin([1,0])]
     
     ############
-    # REMOVING SOME MISSING DATA
-    ##################
-    bark = remove_nans(dogs_final,['Size','Age','Gender'])
-    
-    ############
-    # PARSING out TRAINING/TESTING DATA, then saving in separate files
+    # PARSING out TRAINING/TESTING DATA, then saving as .csv
     ##################
     
-    indices = cross_validation.ShuffleSplit(len(dogs_final),n_iter = 1,test_size = 0.25)
+    if os.path.isfile('cross_validation.pk'):
+        with open('cross_validation.pk','rb') as f:
+            indices = pk.load(f)
+    else:
+        indices = cross_validation.ShuffleSplit(len(modeldata),n_iter = 1,test_size = 0.25)
+        with open('cross_validation.pk','wb') as f:
+            pk.dump(indices, f)
+            
+    
 
     for train,test in indices:
         tr = train
         ts = test
         
     ## training set:
-    dogs_final.iloc[tr].to_csv('Dogs_Final_Train.csv')
+    modeldata.iloc[tr].to_csv('Dogs_Final_Train.csv',index = False)
+    
     
     ## test set:
-    dogs_final.iloc[ts].to_csv('Dogs_Final_Test.csv')
+    modeldata.iloc[ts].to_csv('Dogs_Final_Test.csv', index = False)
 
 
+if __name__ == '__main__':
+    get_sanitized()
     
-
-main()
 
 
     
