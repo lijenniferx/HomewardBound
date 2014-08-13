@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Starter Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="static/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="static/starter-template.css" rel="stylesheet">
+
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="brand" href = "/home"><img STYLE="position:absolute; TOP:15px; LEFT:50px; WIDTH:220px; HEIGHT:35px" src="/static/PetPics/logo.jpg"></a>
+
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="http://www.lijenniferx.com">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <!-- Page Content -->
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div>
+                    <img class="img-responsive left-block" src={{theDog}} height = "300" width = "300">
+                    <div class="caption-full">
+                        <h3><a>{{theList[0]}}</a></h3>
+                        <div>
+
+                            <ul>
+                                <li><b>Breed</b>: {{theList[1]}}</li>
+                                <li><b>Age:</b> {{theList[2]}}</li>
+                                <li><b>Size: </b>{{theList[3]}}</li>
+                                <li><b>Sex:</b> {{theList[4]}}</li>
+                                <li><b>Fixed:</b> {{theList[5]}}</li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="col-md-4">
+<br>
+<br>
+<br>
+
+        <div class="progress">
+             <div id = 'progressBar' class="progress-bar" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 30%;">
+
+        
+             <script> $("#progressBar").css("width","{{allPercentages[0]}}");
+                    $("#progressBar").css('background-color',"gray");     
+             </script>
+        
+                
+            </div>   
+        
+            <div id = 'FixBar' class="progress-bar progress-bar-success progress-bar-striped" style="width: 0%">
+            </div>
+            <div id = 'NameBar' class="progress-bar progress-bar-success progress-bar-striped" style="width: 0%">
+            </div>
+            <div id = 'BothBar' class="progress-bar progress-bar-success progress-bar-striped" style="width: 0%">
+            </div>
+            
+
+        </div>
+             <div id = 'change_text'>
+             <div class = "caption-full">
+                <h3> If you do nothing, I only have a {{allPercentages[0]}} chance of getting adopted. </h3>
+
+             </div>
+            </div>
+
+   
+            
+            {% if thePrediction[1] ==1 %}
+            <div class="col-lg-5">
+            <div class="input-group">
+            <span class="input-group-addon">
+            <input id = 'fixbox' type="radio"><br>FIX ME
+            </span>
+            </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+            {% endif %}
+
+            {% if thePrediction[2] ==1 %}
+            <div class="col-lg-5">
+            <div class="input-group">
+            <span class="input-group-addon">
+            <input id = 'namebox' type="radio"><br>NAME ME
+            </span>
+            </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 -->
+            {% endif %}
+
+
+
+            <script src="static/js/bootstrap.min.js"></script>
+            <script>
+            $("#namebox, #fixbox").click(function () {
+                if ($("#namebox").is(':checked') == true && $("#fixbox").is(':checked') == true) {
+                    
+                    $("#FixBar").css('width',"0%");
+                    $("#NameBar").css('width',"0%");
+                    $("#BothBar").css('width',"{{allPercentages[3]}}");
+                    $("#change_text .caption-full h3").text("With even more help, I could have a {{thePrediction[5]}}% chance.");
+                    $('#volunteerbutton').show();
+
+                    
+                    } else if ($("#fixbox").is(':checked') == true && $("#namebox").is(':checked') == false) {
+                    $("#BothBar").css('width',"0%");
+                    $("#NameBar").css('width',"0%");
+                    $("#FixBar").css('width',"{{allPercentages[1]}}");
+                    $("#change_text .caption-full h3").text("With your help, I could have a {{thePrediction[3]}}% chance.");
+                    $('#volunteerbutton').show();
+
+                    } else if ($("#fixbox").is(':checked') == false && $("#namebox").is(':checked') == true) {
+                    $("#BothBar").css('width',"0%");
+                    $("#FixBar").css('width',"0%");
+                    $("#NameBar").css('width',"{{allPercentages[2]}}");
+                    $("#change_text .caption-full h3").text("With your help, I could have a {{thePrediction[4]}}% chance.");
+                    $('#volunteerbutton').show();
+                    }
+
+                });</script>
+
+
+                <div  class="col-md-5"  >
+                    <br>
+                    <br>
+                    <a href="http://vols.pt/KBk1GX"><img border=0 src="http://www.volunteerspot.com/images/signup.gif" id = "volunteerbutton" style="display:none;"></a>
+                <div/>
+
+        </div>
+    </div>
+
+
+                
+    <!-- /.container -->
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <br>
+    <br>
+    <div class="container">
+
+        <hr>
+
+        <!-- Footer -->
+        <footer>
+           
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Copyright &copy; HomewardBound 2014</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+    <!-- /.container -->
+
+    <!-- jQuery Version 1.11.0 -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="static/js/bootstrap.min.js"></script>
+
+
+ 
+
+</body>
+
+</html>
