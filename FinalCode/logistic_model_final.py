@@ -44,16 +44,47 @@ grid_search_object.fit(X,Y)  # use fit if last item in pipeline is fit.
 #grid_search_object.best_estimator_.fit(X,Y)
 #
 #largest_coefficients =  abs(grid_search_object.best_estimator_.named_steps['model'].coef_).argsort()[0][::-1]
-#
+#top_ten_coefs = grid_search_object.best_estimator_.named_steps['model'].coef_[0][largest_coefficients][0:10]
+#top_ten_labels = column_names[largest_coefficients][0:10]
+#indices = top_ten_coefs.argsort()
+#import string
+#for i in range(10):
+#    if top_ten_coefs[indices[i]] > 0:
+#        my_color ='r'
+#    else:
+#        my_color = 'k'
+#    plt.bar(i, top_ten_coefs[indices[i]],color = my_color)
+#    plt.text(i + 0.4,-5,string.upper(top_ten_labels[indices[i]]), rotation = 90, color = my_color)
+#plt.gcf().subplots_adjust(bottom=0.30)
+#plt.ylabel('Regression coefficient')
+#plt.xticks(np.arange(0.5,10.5,1), [],rotation=90)
+#plt.grid()
+
 #pvalues.argsort()
-with open('finalmodel.pk','w') as f:
+with open('finalmodel_train.pk','w') as f:
     pk.dump(grid_search_object.best_estimator_,f)
 
 ##### checking on test data
 
 X_test,Y_test, blah = prepare_for_model('Dogs_Final_Test.csv')
 
-with open('finalmodel.pk','r') as f:
-    finalmodel = pk.load(f)
+with open('finalmodel_train.pk','r') as f:
+    finalmodel_train = pk.load(f)
     
-finalmodel.score(X_test,Y_test)
+finalmodel_train.score(X_test,Y_test)
+
+
+##### combining training and test data to generate model:
+
+X_test,Y_test, blah = prepare_for_model('Dogs_Final_Test.csv')
+X,Y,column_names = prepare_for_model('Dogs_Final_Train.csv')
+
+X_all = np.vstack((X,X_test))
+Y_all = np.hstack((Y,Y_test))
+with open('finalmodel_train.pk','r') as f:
+    finalmodel = pk.load(f)
+
+finalmodel.fit(X_test,Y_test)
+
+with open('finalmodel.pk','w') as f:
+    pk.dump(finalmodel,f)
