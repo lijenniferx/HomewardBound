@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>jQuery Progress Circle Plugin Demos</title>
+
+<link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+<link href="static/css/circle.css" rel="stylesheet" type="text/css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="static/js/progress-circle.js"></script>
+<style>
+#circle {
+  margin: 10px;
+}
+#submit {
+  cursor: pointer;
+  font-weight: bold;
+  float: right;
+  color: #90c844;
+}
+</style>
+</head>
+
+<body>
+<div id="circle"></div>
+      <script>
+                $('#circle').progressCircle({
+                    nPercent        : 50,
+                    showPercentText : true,
+                circleSize      : 400,
+                thickness       : 5
+                })( jQuery );
+            </script>
+
+    
+
+
+</body>
+</html>

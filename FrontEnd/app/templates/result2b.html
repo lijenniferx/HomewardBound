@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Starter Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="static/starter-template.css" rel="stylesheet">
+    <link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+    <link href="static/css/circle.css" rel="stylesheet" type="text/css">
+
+
+<style>
+#circle {
+  margin: 10px;
+}
+#submit {
+  cursor: pointer;
+  font-weight: bold;
+  float: right;
+  color: #90c844;
+}
+</style>
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="brand" ><img STYLE="position:absolute; TOP:15px; LEFT:50px; WIDTH:220px; HEIGHT:35px" src="/static/PetPics/logo.jpg" ></a>
+
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <!-- Page Content -->
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div>
+                    <img class="img-responsive left-block" src={{theDog}} height = "300" width = "300">
+                    <div class="caption-full">
+                        <h3><a>{{theList[0]}}</a></h3>
+                        <div>
+
+                            <ul>
+                                <li><b>Breed</b>: {{theList[1]}}</li>
+                                <li><b>Age:</b> {{theList[2]}}</li>
+                                <li><b>Size: </b>{{theList[3]}}</li>
+                                <li><b>Sex:</b> {{theList[4]}}</li>
+                                <li><b>Fixed:</b> {{theList[5]}}</li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="col-md-4">
+<br>
+<br>
+<br>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="static/js/progress-circle.js"></script>
+        <div id="circle"></div>
+        <script>
+                $('#circle').progressCircle({
+                    nPercent        : 50,
+                    showPercentText : true,
+                circleSize      : 400,
+                thickness       : 5
+                })( jQuery );
+        </script>
+
+            <div class = "caption-full">
+                  <h3>Currently, I have a {{thePercentage}} chance of getting adopted.</h3>
+                {% if thePrediction[1] + thePrediction[2] >0%}
+                
+                    <form action="/recommendation" method="GET">
+                        <input type="hidden" name="alignment" value="{{theID}}" />
+                        <button class="btn btn-large btn-info" >WE CAN DO BETTER!</button>
+                        
+                    </form>
+
+                {% endif %}
+            </div>
+
+            
+
+            </div>
+        </div>
+    </div>
+
+
+                
+    <!-- /.container -->
+
+    <div class="container">
+
+        <hr>
+
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Copyright &copy; HomewardBound 2014</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+    <!-- /.container -->
+
+    <!-- jQuery Version 1.11.0 -->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="static/js/bootstrap.min.js"></script>
+
+
+ 
+
+</body>
+
+</html>
