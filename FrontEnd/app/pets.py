@@ -1,48 +1,35 @@
 from flask import Flask
 app = Flask(__name__)
-# import views
-
-# from app import app
-app.run(host = '0.0.0.0', port = 5000)
 
 from flask import render_template
-# from app import app
 import pymysql as mdb
 from flask import jsonify
 from flask import request
 
+
 db = mdb.connect('localhost', 'root','shreddie131','HomewardBound',charset='utf8');
 
+# @app.route('/')
+# @app.route('/index')
+# def index():
+#     return render_template("index.html",
+#         title = 'Home', user = { 'nickname': 'Jenn' },
+#         )
+
+# @app.route('/db')
+# def cities_page():
+#     with db: 
+#         cur = db.cursor()
+#         cur.execute("SELECT Name FROM city LIMIT 15;")
+#         query_results = cur.fetchall()
+#     cities = ""
+#     for result in query_results:
+#         cities += result[0]
+#         cities += "<br>"
+#     return cities
+
+
 @app.route('/')
-@app.route('/index')
-def index():
-    return render_template("index.html",
-        title = 'Home', user = { 'nickname': 'Miguel' },
-        )
-
-@app.route('/db')
-def cities_page():
-    with db: 
-        cur = db.cursor()
-        cur.execute("SELECT Name FROM city LIMIT 15;")
-        query_results = cur.fetchall()
-    cities = ""
-    for result in query_results:
-        cities += result[0]
-        cities += "<br>"
-    return cities
-
-
-#
-#@app.route("/jquery")
-#def index_jquery():
-#    
-#    return render_template('index_js.html')
-
-# @app.route("/circle")
-# def testing():
-#     return render_template('circle.html')
-
 @app.route("/home")
 def index_jquery():
     
@@ -189,7 +176,7 @@ def newpage():
     return render_template("result3.html", color= color, thePrediction = thePrediction, theDog = theDog, theList = theList, allPercentages = allPercentages)
 
 
-if __name__ == '__main__':
-    app.run()
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')
 
 
