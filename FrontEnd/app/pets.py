@@ -1,12 +1,12 @@
 from flask import Flask
 app = Flask(__name__)
-from app import views
+# import views
 
 # from app import app
 app.run(host = '0.0.0.0', port = 5000)
 
 from flask import render_template
-from app import app
+# from app import app
 import pymysql as mdb
 from flask import jsonify
 from flask import request
@@ -189,5 +189,7 @@ def newpage():
     return render_template("result3.html", color= color, thePrediction = thePrediction, theDog = theDog, theList = theList, allPercentages = allPercentages)
 
 
+if __name__ == '__main__':
+    app.run()
 
 
