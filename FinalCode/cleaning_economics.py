@@ -9,14 +9,16 @@ unemployment = data = pd.read_csv('Unemployment.csv')
 population = data = pd.read_csv('Population.csv')
 
 
-workforce['Date'] = pd.to_datetime(workforce['Date'],format = '%Y-%m-%d')
+workforce['Date'] = pd.to_datetime(workforce['Date'])
 unemployment['Date'] = pd.to_datetime(unemployment['Date'])
-population['Date'] = pd.to_datetime(population['Date'],format = '%Y-%m-%d')
+population['Date'] = pd.to_datetime(population['Date'])
 
 
 ### joining tables together
 
 economics = workforce.merge(unemployment)
+
+### appending a few new rows
 
 economics['Month'] = economics['Date'].apply(lambda(x):x.month)
 economics['Year'] = economics['Date'].apply(lambda(x):x.year)

@@ -53,7 +53,6 @@ for i in range(len(X)):
     items['Status'].loc[i] = 1 if critteroutcomes['AdoptionPercentage'].loc[i] > 50 else 0
 
 items.to_csv('Dogs_Final_DEMO.csv',index = False)
-### unfixed dogs
 
 
 ### unnamed dogs...calculate percentage chance if they are named

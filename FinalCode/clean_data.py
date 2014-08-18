@@ -31,6 +31,7 @@ def read_in_data():
         dogs = sql.read_sql('select * from Pets_cleaned;', con = con)   
         weather = sql.read_sql('select * from PetWeather;',con = con)
         econ = sql.read_sql('select * from PetEcon;',con = con)
+        
 
 
     return dogs, weather, econ
@@ -79,28 +80,7 @@ condition_dict = {'GOOD':'GOOD',
                 'TOO YOUNG':'BAD',
                 'WILD':'BAD'}
                 
-month_dict = {1:'JAN',
-                 2:'FEB',
-                 3:'MAR',
-                 4:'APR',
-                 5:'MAY',
-                 6:'JUN',
-                 7:'JUL',
-                 8:'AUG',
-                 9:'SEP',
-                10:'OCT',
-                11:'NOV',
-                12:'DEC'}
                 
-weekday_dict = {0:'SUN',
-                1:'MON',
-                2:'TUES',
-                3:'WED',
-                4:'THU',
-                5:'FRI',
-                6:'SAT'}
-                
-
 def map_dict(i,mydict):
         if i in mydict.keys():
             return mydict[i]
@@ -136,11 +116,16 @@ def get_sanitized():
     dogs_final['ArrivalDate'] = pd.to_datetime(dogs_final['ArrivalDate'])
     dogs_final['Year'] = map(lambda(x):x.year, dogs_final['ArrivalDate'].tolist())
     dogs_final['Month'] = map(lambda(x):x.month, dogs_final['ArrivalDate'].tolist())
-    dogs_final['Weekday'] = map(lambda(x):x.dayofweek, dogs_final['ArrivalDate'].tolist())
-    dogs_final['Quarter'] = map(lambda(x):x.quarter, dogs_final['ArrivalDate'].tolist())
-    dogs_final['Week'] = map(lambda(x):x.week, dogs_final['ArrivalDate'].tolist())
     dogs_final['Day'] = map(lambda(x):x.day, dogs_final['ArrivalDate'].tolist())
 
+    ####################################
+    #  MERGING WITH ECON DATA and weather data
+    ########################################
+
+    dogs_final = dogs_final.merge(econ, on = ['Month','Year'])
+    
+
+    dogs_final = dogs_final.merge(weather, on = ['Month','Year','Day'])
     
     ##############
     # LENGTH of STaY (number of days)-- convert to int
@@ -163,14 +148,7 @@ def get_sanitized():
         
     dogs_final['PupInflux'] = dogs_final['ArrivalDate'].apply(arrived)
     dogs_final['ShelterPop'] = get_pop(dogs_final)
-    ####################################
-    #  MERGING WITH ECON DATA and weather data
-    ########################################
 
-    dogs_final = dogs_final.merge(econ)
-    
-
-    dogs_final =dogs_final.merge(weather, on = ['Month','Year','Day'])
         
 
 
@@ -223,10 +201,8 @@ def get_sanitized():
     dogs_final['Status'] = dogs_final['Status'].apply(lambda(x):map_dict(x, adopt_dict))
     dogs_final['Gender'] = dogs_final['Gender'].apply(lambda(x):map_dict(x, gender_dict))
     dogs_final['PetCondition'] = dogs_final['PetCondition'].apply(lambda(x):map_dict(x, condition_dict))
-    dogs_final['Month'] = dogs_final['Month'].apply(lambda(x):map_dict(x, month_dict))
-    dogs_final['Weekday'] = dogs_final['Weekday'].apply(lambda(x):map_dict(x, weekday_dict))
     
-    dummies = pd.get_dummies(dogs_final['Gender']).iloc[:,[1,2]]
+    dummies = pd.get_dummies(dogs_final['Gender']).iloc[:,[1]]
     dummies2 = pd.get_dummies(dogs_final['TopBreed'])
     dummies3 = pd.get_dummies(dogs_final['TopColor'])
     dummies4 = pd.get_dummies(dogs_final['ArrivedAs']).iloc[:,:-1]
@@ -234,7 +210,7 @@ def get_sanitized():
     dummies6 = pd.get_dummies(dogs_final['Size']).iloc[:,:-1]
     dummies7 = pd.get_dummies(dogs_final['PetCondition']).iloc[:,:-1]
     
-    largedata = pd.concat([dogs_final[['ArrivalDate','AnimalID','Status','Fixed','HasName','PupInflux','ShelterPop','HEAT','RAIN','Unemployment','Population','LengthofStay']],dummies,dummies2,dummies3,dummies4,dummies5,dummies6, dummies7],axis = 1)
+    largedata = pd.concat([dogs_final[['ArrivalDate','AnimalID','Status','Fixed','HasName','PupInflux','HEAT','RAIN','Unemployment','Population','LengthofStay']],dummies,dummies2,dummies3,dummies4,dummies5,dummies6, dummies7],axis = 1)
 
     #### getting examples from website
     

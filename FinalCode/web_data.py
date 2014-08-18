@@ -11,22 +11,22 @@ current_url = 'http://www.adoptapet.com/shelter75721-dogs.html'
 page = urllib2.urlopen(current_url)
 soup = BeautifulSoup(page)
 
-#direction = 'arrow right'
-#while direction == 'arrow right':
+direction = 'arrow right'
+all_dog_links = []
+while direction == 'arrow right':
     ### get all animals
-#all_dog_pics = soup.findAll('img', attrs = {'src' : re.compile('https://'), 'width' : 200})
-all_dog_links = soup.findAll('a', attrs = {'class' : "smaller_line_height", 'href' : re.compile('http://www.adoptapet.com/pet/[0-9]{8}-weatherford')})    
-all_dog_links = np.unique(map(lambda(x):x['href'], all_dog_links))
-    
+    dogs = soup.findAll('a', attrs = {'class' : "smaller_line_height", 'href' : re.compile('http://www.adoptapet.com/pet/[0-9]{8}-weatherford')})    
+    dogs = np.unique(map(lambda(x):x['href'], dogs))
+    all_dog_links+=dogs
 
 
-    #try:
-    #    next_link = soup.findAll('a', attrs = {'href' : re.compile('http://www.adoptapet.com/cgi-bin/public/petsearch.cgi/search_pets_by_shelter')})[-1]
-    #    direction = next_link.find('img')['alt']
-    #    page = urllib2.urlopen(next_link['href'])
-    #    soup = BeautifulSoup(page)
-    #except:
-    #    direction = 'no more links'
+    try:
+        next_link = soup.findAll('a', attrs = {'href' : re.compile('http://www.adoptapet.com/cgi-bin/public/petsearch.cgi/search_pets_by_shelter')})[-1]
+        direction = next_link.find('img')['alt']
+        page = urllib2.urlopen(next_link['href'])
+        soup = BeautifulSoup(page)
+    except:
+        direction = 'no more pages'
         
 
 

@@ -24,13 +24,8 @@ data['TMIN'] = data['TMIN']/10 *9/5 + 32
 
 data = data[['Date','PRCP','TMAX','TMIN','Month','Year','Day']]
 
-data.to_csv('WeatherFinal.csv', index = False)
 
-
-#### computing additional columns
-cleaned_data = pd.read_csv('WeatherFinal.csv')
-
-new_data = cleaned_data.groupby('Date').apply(lambda(x):np.mean(x))
+new_data = data.groupby('Date').apply(lambda(x):np.mean(x))
 def prior_days_avg(x,days):
     x =  [x[0] for i in range(days)] + x
     values = scipy.signal.convolve(x, [1 for i in range(days)])/days
@@ -40,12 +35,16 @@ new_data['RAIN'] = prior_days_avg(new_data.PRCP.tolist(),10)
 new_data['HEAT'] = prior_days_avg(new_data.TMAX.tolist(),10)
 new_data['COLD'] = prior_days_avg(new_data.TMIN.tolist(),10)
 
-new_data['Date'] = new_data.index
-new_data = new_data[['Date','RAIN','HEAT','COLD', 'Month','Year','Day']]
+new_data = new_data[['RAIN','HEAT','COLD', 'Month','Year','Day']]
+
+new_data.Month = new_data.Month.apply(int)
+new_data.Year = new_data.Year.apply(int)
+new_data.Day = new_data.Day.apply(int)
+
+new_data = new_data.dropna()
+
+
 new_data.to_csv('PetWeather.csv',index = False)
-
-
-csv_to_mysql('PetWeather.csv', 'PetWeather')
-
+csv_to_mysql('PetWeather.csv','PetWeather')
 
 
