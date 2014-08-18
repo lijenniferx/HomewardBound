@@ -9,31 +9,11 @@ from flask import request
 
 db = mdb.connect('localhost', 'root','shreddie131','HomewardBound',charset='utf8');
 
-# @app.route('/')
-# @app.route('/index')
-# def index():
-#     return render_template("index.html",
-#         title = 'Home', user = { 'nickname': 'Jenn' },
-#         )
-
-# @app.route('/db')
-# def cities_page():
-#     with db: 
-#         cur = db.cursor()
-#         cur.execute("SELECT Name FROM city LIMIT 15;")
-#         query_results = cur.fetchall()
-#     cities = ""
-#     for result in query_results:
-#         cities += result[0]
-#         cities += "<br>"
-#     return cities
-
 
 @app.route('/')
 @app.route("/home")
 def index_jquery():
     
-    # return render_template('index_js_pets.html')
     return render_template('home.html')
 
 
@@ -52,31 +32,6 @@ def my_jquery():
 
         
     return render_template('seeall.html', information = information)
-#
-#@app.route("/db_json")
-#def cities_json():
-#    with db:
-#        cur = db.cursor()
-#        cur.execute("SELECT Name, CountryCode, Population FROM city ORDER BY Population DESC;")
-#        query_results = cur.fetchall()
-#    cities = []
-#    for result in query_results:
-#        cities.append(dict(name=result[0], country=result[1], population=result[2]))
-#    return jsonify(dict(cities=cities))
-
-
-# @app.route("/db_json")
-# def cities_json():
-#     with db:
-#         cur = db.cursor()
-#         cur.execute("SELECT AnimalID, AdoptionProbability FROM Demo_Data WHERE AnimalID = '46904' LIMIT 1")
-#         query_results = cur.fetchall()
-#     cities = []
-#     for result in query_results:
-#         cities.append(dict(AnimalID=result[0], AdoptionProbability=result[1]))
-
-#     return jsonify(dict(cities=cities))
-
 
 @app.route("/result")
 def resultpage():
