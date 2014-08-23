@@ -154,6 +154,7 @@
                     $("#BothBar").css('width',"{{allPercentages[3]}}");
                     $("#change_text .caption-full h3").text("With even more help, I could have a {{thePrediction[5]}}% chance.");
                     $('#volunteerbutton').show();
+                    $('#donatebutton').show();
 
                     
                     } else if ($("#fixbox").is(':checked') == true && $("#namebox").is(':checked') == false) {
@@ -161,8 +162,8 @@
                     $("#NameBar").css('width',"0%");
                     $("#FixBar").css('width',"{{allPercentages[1]}}");
                     $("#change_text .caption-full h3").text("With your help, I could have a {{thePrediction[3]}}% chance.");
-                    $('#volunteerbutton').show();
-
+                    $('#donatebutton').show();
+                    
                     } else if ($("#fixbox").is(':checked') == false && $("#namebox").is(':checked') == true) {
                     $("#BothBar").css('width',"0%");
                     $("#FixBar").css('width',"0%");
@@ -176,6 +177,9 @@
 
                 <div  class="col-md-5"  >
                     <br>
+                    <br>
+                    <br>
+                    <a href="http://www.weatherfordtx.gov/index.aspx?NID=83"><img width = 150 border=0 src="http://www.dpwords.org/main/wp-content/uploads/2013/12/heart-donation-button.jpg" id = "donatebutton" style="display:none;"></a>
                     <br>
                     <a href="http://vols.pt/KBk1GX"><img border=0 src="http://www.volunteerspot.com/images/signup.gif" id = "volunteerbutton" style="display:none;"></a>
                 <div/>
