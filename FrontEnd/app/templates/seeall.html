@@ -59,13 +59,13 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 
                     {% for i in information %}
                         {% set my_string = 'static/PetPics/' ~   i[0]%}
                         {% set my_link = '/result?ID=' ~   i[0]%}
                         <br>
-
+                        
                         {% if i[1] > 50 %}
                             {% set my_color = 'green' %}
                         {% else %}
@@ -80,6 +80,11 @@
                         <div style="display:block;text-align:center">
                         <legend align="right"> I have a <font color = '{{my_color}}'> {{i[1]}}%</font> chance of being adopted</legend></div>
                         <br>
+                        <br>
+                        <br>
+                    
+                        
+
                     </form>
                     {% endfor %}
 
