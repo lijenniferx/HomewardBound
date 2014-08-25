@@ -16,6 +16,9 @@ def index_jquery():
     
     return render_template('home.html')
 
+@app.route("/presentation")
+def show_presentation():
+    return render_template('presentation.html')
 
 @app.route("/seeall")
 def my_jquery():
