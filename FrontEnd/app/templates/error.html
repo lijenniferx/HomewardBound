@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Starter Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="static/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="static/starter-template.css" rel="stylesheet">
+
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <style type="text/css">
+      body { background-image: url(static/PetPics/background.jpg);
+        background-size: 1350px 820px;
+      background-repeat:no-repeatdisplay:compact;}
+    </style>
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="brand" ><img STYLE="position:absolute; TOP:15px; LEFT:50px; WIDTH:220px; HEIGHT:35px" src="/static/PetPics/logo.jpg" ></a>
+
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="http://www.lijenniferx.com">About</a></li>
+            <li><a href="https://github.com/lijenniferx/HomewardBound">Github</a></li>
+            <li><a href="/presentation">Presentation</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+
+  <div class="container">
+
+      <div class="starter-template">
+        <h1></h1>
+        <p class="lead">A web tool for predicting and promoting dog adoption.<br>.</p>
+      </div>
+
+    <div>
+      <a> Sorry, that is not a valid Animal ID.  Please try again! </a>
+      <form class="navbar-form text-center" action="/result" method="GET">
+        Enter the Animal ID:
+        <input type="text" name="ID" placeholder="e.g. 47377">
+        <button type="submit" class="btn btn-small btn-warning ">Will I be Adopted?
+        </button>
+      </form>
+
+      <form class="navbar-form text-center" action="/seeall" method="GET">
+
+        <button type="submit" class="btn btn">SEE ALL ANIMALS
+        </button>
+                  
+      </form>
+    
+        <br>
+
+    </div>
+
+  </div><!-- /.container -->
+</div>
+
+
+
+  <nav class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
+    <div class="container">
+      <p class="text-muted">In partnership with the <a href = "http://www.weatherfordtx.gov/index.aspx?nid=15" target="_blank">Weatherford/Parker County Animal Shelter</a> </p>
+    </div>
+  </nav>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <!--     <script src="static/js/jquery.js"></script> -->
+    <script src="static/js/bootstrap.min.js"></script>
+    
+  </body>
+</html>

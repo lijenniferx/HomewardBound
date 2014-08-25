@@ -38,48 +38,52 @@ def resultpage():
 
     db = mdb.connect('localhost', 'root','shreddie131','HomewardBound',charset='utf8');
     
-    IDnumber = int(request.args.get('ID'))
+    try:
+        IDnumber = int(request.args.get('ID'))
 
-    with db:
-        cur = db.cursor()
-        cur.execute("SELECT * FROM Demo_Critter_Bio WHERE AnimalID = '" + str(IDnumber) + "' LIMIT 1")
-        query_results = cur.fetchall()
+        with db:
+            cur = db.cursor()
+            cur.execute("SELECT * FROM Demo_Critter_Bio WHERE AnimalID = '" + str(IDnumber) + "' LIMIT 1")
+            query_results = cur.fetchall()
 
-        cur.execute("SELECT AdoptionPercentage,  ImprovementFix,ImprovementName FROM Demo_Critter_Predictions WHERE AnimalID = '" + str(IDnumber) + "' LIMIT 1")
-        query_results_predictions = cur.fetchall()
+            cur.execute("SELECT AdoptionPercentage,  ImprovementFix,ImprovementName FROM Demo_Critter_Predictions WHERE AnimalID = '" + str(IDnumber) + "' LIMIT 1")
+            query_results_predictions = cur.fetchall()
 
-        cur.execute("SELECT Days FROM Demo_Critter_Days WHERE AnimalID = '" + str(IDnumber) + "' LIMIT 1")
-        length_of_stay = int(round(cur.fetchall()[0][0]))
+            cur.execute("SELECT Days FROM Demo_Critter_Days WHERE AnimalID = '" + str(IDnumber) + "' LIMIT 1")
+            length_of_stay = int(round(cur.fetchall()[0][0]))
 
 
     
-    theID = int(query_results[0][1])
+        theID = int(query_results[0][1])
 
-    if query_results[0][2] == '':
-        name = "I do not yet have a name."
-    else:
-        name = "Hi! My name is " + query_results[0][2]
+        if query_results[0][2] == '':
+            name = "I do not yet have a name."
+        else:
+            name = "Hi! My name is " + query_results[0][2]
 
-    breed = query_results[0][3]
-    age = query_results[0][4]
-    size = query_results[0][5]
-    sex = query_results[0][6]
-    fixed = 'Yes' if query_results[0][7] == '1' else 'No'
+        breed = query_results[0][3]
+        age = query_results[0][4]
+        size = query_results[0][5]
+        sex = query_results[0][6]
+        fixed = 'Yes' if query_results[0][7] == '1' else 'No'
 
-    theList = [name, breed, age, size, sex, fixed]
+        theList = [name, breed, age, size, sex, fixed]
 
 
-    theDog = "static/PetPics/" + str(int(query_results[0][1]))
+        theDog = "static/PetPics/" + str(int(query_results[0][1]))
 
-     ## prediction related information
-    thePrediction = [int(round(query_results_predictions[0][0])), query_results_predictions[0][1], query_results_predictions[0][2]]
+         ## prediction related information
+        thePrediction = [int(round(query_results_predictions[0][0])), query_results_predictions[0][1], query_results_predictions[0][2]]
 
-    thePercentage = str(thePrediction[0]) + '%'
+        thePercentage = str(thePrediction[0]) + '%'
 
+        
+
+        return render_template("result2.html", length_of_stay = length_of_stay, theID = theID, theDog = theDog, theList= theList, thePrediction = thePrediction, thePercentage = thePercentage)
     
+    except
 
-    return render_template("result2.html", length_of_stay = length_of_stay, theID = theID, theDog = theDog, theList= theList, thePrediction = thePrediction, thePercentage = thePercentage)
-
+        return render_template("error.html")
 
 
 
