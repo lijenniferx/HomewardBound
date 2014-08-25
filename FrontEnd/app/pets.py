@@ -7,9 +7,6 @@ from flask import jsonify
 from flask import request
 
 
-db = mdb.connect('localhost', 'root','shreddie131','HomewardBound',charset='utf8');
-
-
 @app.route('/')
 @app.route("/home")
 def index_jquery():
@@ -22,7 +19,7 @@ def show_presentation():
 
 @app.route("/seeall")
 def my_jquery():
-
+    db = mdb.connect('localhost', 'root','shreddie131','HomewardBound',charset='utf8');
     with db:
         cur = db.cursor()
 
@@ -39,7 +36,7 @@ def my_jquery():
 @app.route("/result")
 def resultpage():
 
-
+    db = mdb.connect('localhost', 'root','shreddie131','HomewardBound',charset='utf8');
     
     IDnumber = int(request.args.get('ID'))
 
@@ -89,6 +86,7 @@ def resultpage():
 
 @app.route("/recommendation")
 def newpage():
+    db = mdb.connect('localhost', 'root','shreddie131','HomewardBound',charset='utf8');
     IDnumber =  request.args.get('alignment')
     
     with db:
