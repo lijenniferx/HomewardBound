@@ -81,7 +81,7 @@ def resultpage():
 
         return render_template("result2.html", length_of_stay = length_of_stay, theID = theID, theDog = theDog, theList= theList, thePrediction = thePrediction, thePercentage = thePercentage)
     
-    except
+    except:
 
         return render_template("error.html")
 
