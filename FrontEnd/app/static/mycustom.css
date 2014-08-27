@@ -1,0 +1,20 @@
+.thumbnail2 {
+    border-radius: 50%;
+    -webkit-filter: grayscale(100%);
+    opacity: .4;
+    -webkit-transition: all 0.1s ease-in-out;
+    -moz-transition: all 0.1s ease-in-out;
+    -o-transition: all 0.1s ease-in-out;
+    -ms-transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out;
+}
+.thumbnail2:hover {
+    border-radius: 50%;
+    -webkit-filter: grayscale(0%);
+    opacity: 1;
+    -webkit-transition: all 0.1s ease-in-out;
+    -moz-transition: all 0.1s ease-in-out;
+    -o-transition: all 0.1s ease-in-out;
+    -ms-transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out;
+}
