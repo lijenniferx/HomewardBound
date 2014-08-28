@@ -3,7 +3,7 @@ import pymysql as mdb
 import pickle as pk
 from get_model_columns import get_columns
 
-con =  mdb.connect('localhost', 'root','shreddie131','HomewardBound'); 
+con =  mdb.connect('localhost', 'root','***','HomewardBound'); 
 items = pd.read_csv('Dogs_Final_DEMO.csv')
 
 
