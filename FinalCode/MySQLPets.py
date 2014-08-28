@@ -8,7 +8,7 @@ def csv_to_mysql(filename, tablename):
     from pandas.io import sql
     import re
     
-    con =  mdb.connect('localhost', 'root','shreddie131','HomewardBound'); 
+    con =  mdb.connect('localhost', 'root','***','HomewardBound'); 
     
     
     data = pd.read_csv(filename)
