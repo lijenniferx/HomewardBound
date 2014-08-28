@@ -86,7 +86,7 @@ predictions = res2.predict(X_demo)
 
 
 import pymysql as mdb
-con =  mdb.connect('localhost', 'root','shreddie131','HomewardBound'); 
+con =  mdb.connect('localhost', 'root','***','HomewardBound'); 
 with con:
         cur = con.cursor()
         cur.execute("USE HomewardBound")
