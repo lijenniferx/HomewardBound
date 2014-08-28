@@ -3,7 +3,7 @@ import pandas as pd
 from pandas.io import sql
 import re
 
-con =  mdb.connect('localhost', 'root','shreddie131','HomewardBound'); 
+con =  mdb.connect('localhost', 'root','***','HomewardBound'); 
 
 with con:
         cur = con.cursor()
