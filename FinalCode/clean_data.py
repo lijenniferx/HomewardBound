@@ -25,7 +25,7 @@ def list_of_current_animals():
 
 def read_in_data():
     ''' reads in the cleaned table from MySQL'''
-    con =  mdb.connect('localhost', 'root','shreddie131','HomewardBound'); 
+    con =  mdb.connect('localhost', 'root','***','HomewardBound'); 
     
     with con:
         dogs = sql.read_sql('select * from Pets_cleaned;', con = con)   
